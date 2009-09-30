@@ -2,6 +2,7 @@ class HerokuAssetPackager
   @@regex_pattern = /\/\w+\/(.*)_packaged.*/i
   
   def initialize_asset_packager
+    override_asset_packager
     # Make dirs
     unless File.directory? heroku_file_location
       Dir.mkdir(heroku_file_location)
@@ -16,13 +17,15 @@ class HerokuAssetPackager
   
   def initialize(app)
     @app = app
-    initialize_asset_packager
+    initialize_asset_packager if ENV["HEROKU"]
   end
   
   def call(env)
     @env = env
-    return render_css if env['REQUEST_PATH'] =~ /\/stylesheets\/.*_packaged.css/i
-    return render_js if env['REQUEST_PATH'] =~ /\/javascripts\/.*_packaged.js/i
+    if env["HEROKU"]
+      return render_css if env['REQUEST_PATH'] =~ /\/stylesheets\/.*_packaged.css/i
+      return render_js if env['REQUEST_PATH'] =~ /\/javascripts\/.*_packaged.js/i
+    end
     
     @app.call(env)
   end
