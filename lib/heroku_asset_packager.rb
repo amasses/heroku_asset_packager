@@ -22,7 +22,7 @@ class HerokuAssetPackager
   
   def call(env)
     @env = env
-    if env["HEROKU"]
+    if ENV["HEROKU"]
       return render_css if env['REQUEST_PATH'] =~ /\/stylesheets\/.*_packaged.css/i
       return render_js if env['REQUEST_PATH'] =~ /\/javascripts\/.*_packaged.js/i
     end
