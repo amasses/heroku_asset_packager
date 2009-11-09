@@ -1,30 +1,26 @@
 require 'test_helper'
-# require 'mocha'
+require 'mocha'
 
-class HerokuAssetPackagerTest < ActiveSupport::TestCase
+class HerokuAssetPackagerTest < Test::Unit::TestCase
   def test_css_call
-    raise "Test"
     env = {"REQUEST_PATH" => "/stylesheets/test_packaged.css"}
 
-    app = object.new
-    
-    Synthesis::AssetPackager.expects(:build_all)
+    app = mock()
+    Synthesis::AssetPackage.expects(:build_all)
     hap = HerokuAssetPackager.new(app)
 
     assert !$mega_asset_base_path.nil?
     hap.expects(:render_css)
 
     hap.call(env)
-    assert_equal true, false
   end
 
   def test_js_call
-    raise "Test"
     env = {"REQUEST_PATH" => "/javascripts/test_packaged.js"}
 
-    app = object.new
+    app = mock()
     
-    Synthesis::AssetPackager.expects(:build_all)
+    Synthesis::AssetPackage.expects(:build_all)
     hap = HerokuAssetPackager.new(app)
 
     assert_equal false, $mega_asset_base_path.nil?
@@ -34,24 +30,27 @@ class HerokuAssetPackagerTest < ActiveSupport::TestCase
   end
   
   def test_regular_js_call
-    raise "Test"
     env = {"REQUEST_PATH" => "/javascripts/test.js"}
 
-    app = object.new
+    app = mock()
     app.expects(:call).with(env)
     
-    Synthesis::AssetPackager.expects(:build_all)
+    Synthesis::AssetPackage.expects(:build_all)
     hap = HerokuAssetPackager.new(app)
     
     hap.call(env)
   end
-end
+  
+  def test_regular_js_call
+    env = {"REQUEST_PATH" => "/stylesheets/test.css"}
 
-
-
-
-module Synthesis
-  class AssetPackage
+    app = mock()
+    app.expects(:call).with(env)
     
+    Synthesis::AssetPackage.expects(:build_all)
+    hap = HerokuAssetPackager.new(app)
+    
+    hap.call(env)
   end
+  
 end
